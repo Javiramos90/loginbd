@@ -1,0 +1,106 @@
+body {
+    font-family: Arial, sans-serif;
+    height: 100vh;
+    margin: 0;
+    background-color: aliceblue;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    text-align: center;
+    width: 80%;
+    max-width: 600px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid #007bff6e;
+    border-radius: 5px;
+    width: 100%;
+}
+input {
+    margin: 10px 0;
+    padding: 8px;
+    width: 80%;
+}
+input[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.mensaje {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+}
+.info { background-color: #e7f3fe; border: 1px solid #b6d4fe; }
+.error { background-color: #f8d7da; border: 1px solid #f5c2c7; }
+.success { background-color: #d1e7dd; border: 1px solid #badbcc; }
+
+
+
+/* Modal */
+
+.abrir-modal-registro, 
+.abrir-modal-recuperar{
+    cursor: pointer;
+    color: #007bff;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.8);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-contenido {
+    background-color: #fefefe;
+    padding: 2rem;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 600px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    margin: 0 auto;
+}
+
+.modal-contenido h2{
+    text-align: center;
+}
+
+.modal-contenido span {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.modal-contenido span:hover,
+.modal-contenido span:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
