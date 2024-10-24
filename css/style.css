@@ -48,9 +48,9 @@ input[type="submit"] {
     margin-bottom: 15px;
     border-radius: 5px;
 }
-.info { background-color: #e7f3fe; border: 1px solid #b6d4fe; }
-.error { background-color: #f8d7da; border: 1px solid #f5c2c7; }
-.success { background-color: #d1e7dd; border: 1px solid #badbcc; }
+.info { background-color: #e7f3fe; border: 1px solid #539de2; }
+.error { background-color: #f8d7da; border: 1px solid #b92020; }
+.success { background-color: #d1e7dd; border: 1px solid #2f9934; }
 
 
 

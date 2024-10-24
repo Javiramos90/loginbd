@@ -29,8 +29,8 @@ echo "<div class='mensaje $success'>$mensaje</div>";
         <form method="POST" action="controllers/usuarioController.php">
 
             <h2>Login</h2>
-            <input type="email" required placeholder="Correo electronico">
-            <input type="password" required placeholder="Contraseña">
+            <input type="email" name="email" required placeholder="Correo electronico">
+            <input type="password" name="password" required placeholder="Contraseña">
             <a class="abrir-modal-recuperar">Recuperar Contraseña</a>
             <input type="submit" name="login" value="Iniciar Sesion">
         </form>
