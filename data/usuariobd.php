@@ -1,5 +1,6 @@
 <?php
 include_once 'config.php';
+include_once 'enviarCorreos.php';
 
 class UsuarioBD
 {
@@ -15,7 +16,7 @@ class UsuarioBD
     }
 
     //funcion para enviar correo simulado
-    public function enviarCorreosSimulado($destinatario, $asunto, $mensaje)
+    public function enviarCorreoSimulado($destinatario, $asunto, $mensaje)
     {
         $archivo_log = __DIR__ . '/correo_simulado.log';
         $contenido = "Fecha: " . date('Y-m-d H:i:s' . "\n");
@@ -40,17 +41,25 @@ class UsuarioBD
     {
         $password = password_hash($password, PASSWORD_DEFAULT);
         $token = $this->generarToken();
+       
+        //comprobar si el email existe
+        $existe = $this->existeEmail($email);
 
         $sql = "INSERT INTO usuarios (email, password, token, verificado) VALUES(?,?,?,?)";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("sssi", $email, $password, $token, $verificado);
-
-        if ($stmt->execute()) {
-            $mensaje = "Por favor, verifica tu cuenta haciendo clic en este enlace: $this->url/verificar.php?token=$token";
-            return $this->enviarCorreosSimulado($email, "Verificación de cuenta", $mensaje);
-        } else {
+        if(!$existe){
+            if ($stmt->execute()) {
+                $mensaje = "Por favor, verifica tu cuenta haciendo clic en este enlace: $this->url/verificar.php?token=$token";
+                // $mensaje = Correo::enviarCorreo($email,"Cliente", "Verificación de cuenta", $mensaje);
+               $mensaje = $this->enviarCorreoSimulado($email, "Verificación de cuenta", $mensaje);
+            }else {
             return ["success" => false, "message" => "Error en el registro: " . $stmt->error];
         }
+        }else{
+            return ["success" => false, "message" => "Ya existe una cuenta con ese email"];
+        }
+        return $mensaje;
     }
 
     public function verificarToken($token)
@@ -112,10 +121,8 @@ class UsuarioBD
         return $resultado;
     }
 
-    public function recuperarPassword($email)
-    {
-        //verificar que existe el correo en la base de datos
-
+    public function existeEmail($email){
+        //verificamos si existe el correo en la bbdd
         $check_sql = "SELECT id FROM usuarios WHERE email = ?";
         $check_stmt = $this->conn->prepare($check_sql);
         $check_stmt->bind_param("s", $email);
@@ -123,10 +130,17 @@ class UsuarioBD
 
         $result = $check_stmt->get_result();
 
-        $resultado = ["success" => 'info', "massage" => "El correo proporcionado no corresponde a ningun usuario registrado"];
+        return $result->num_rows > 0;
+    }
 
+    public function recuperarPassword($email)
+    {
+        $existe = $this->existeEmail($email);
+
+        $resultado = ["success" => 'info', "message" => "El correo electrónico  proporcionado no corresponde a ningún usuario registrado."];
+       
         //si el correo existe en la bbdd
-        if ($result->num_rows > 0) {
+        if($existe){
             $token = $this->generarToken();
 
             $sql = "UPDATE usuarios SET token_recuperacion = ? WHERE email= ?";
@@ -136,16 +150,18 @@ class UsuarioBD
             //ejecuta la consulta
             if ($stmt->execute()) {
                 $mensaje = "Para restablecer su contraseña, haz click en este enlace: $this->url/restablecer.php?token=$token";
-                $this->enviarCorreosSimulado($email, "Recuperacion de contraseña", $mensaje);
+                // $mensaje = Correo::enviarCorreo($email, "Cliente", "Restablecer Contraseña", $mensaje);
+                $this->enviarCorreoSimulado($email, "Recuperacion de contraseña", $mensaje);
                 $resultado = ["success" => 'success', "massage" => "Se ha enviado un enlace de recuperacion a tu correo"];
 
             } else {
-                $resultado = ["success" => 'error', "massage" => "Ha habido un error al procesar la solicitud "];
+                $resultado = ["success" => 'error', "massage" => "Error al procesar la solicitud "];
 
             }
         }
         return $resultado;
     }
+
     public function restablecerPassword($token, $nueva_password)
     {
         $password = password_hash($nueva_password, PASSWORD_DEFAULT);
